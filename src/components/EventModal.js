@@ -1,16 +1,18 @@
 import React, { useContext, useState } from "react";
 import GlobalContext from "../context/GlobalContext";
 
+
 const labelsClasses = [
   "indigo",
   "gray",
   "green",
   "blue",
   "red",
-  "purple",
+  "purple"
 ];
 
 export default function EventModal() {
+
   const {
     setShowEventModal,
     daySelected,
@@ -30,6 +32,14 @@ export default function EventModal() {
       : labelsClasses[0]
   );
 
+  const [file, setFile] = useState(
+    selectedEvent ? selectedEvent.file : ""
+  );
+
+  function hadleChange(e) {
+    setFile(URL.createObjectURL(e.target.files[0]));
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     const calendarEvent = {
@@ -38,15 +48,22 @@ export default function EventModal() {
       label: selectedLabel,
       day: daySelected.valueOf(),
       id: selectedEvent ? selectedEvent.id : Date.now(),
+      file
     };
+
+    console.log(calendarEvent);
+
     if (selectedEvent) {
       dispatchCalEvent({ type: "update", payload: calendarEvent });
     } else {
-      dispatchCalEvent({ type: "push", payload: calendarEvent });
+       dispatchCalEvent({ type: "push", payload: calendarEvent });
     }
 
     setShowEventModal(false);
   }
+
+
+  
   return (
     <div className="h-screen w-full fixed left-0 top-0 flex justify-center items-center">
       <form className="bg-white rounded-lg shadow-2xl w-1/4">
@@ -123,6 +140,13 @@ export default function EventModal() {
               ))}
             </div>
           </div>
+        </div>
+        <div className="add_picture" >
+        <span className="material-icons-outlined text-gray-400" style={{marginLeft:".75rem",marginTop:"2rem"}}>
+              image
+            </span>
+            <input className="imageUpload" type="file" setfile={file} onChange={hadleChange} /> 
+            <img src={file} />
         </div>
         <footer className="flex justify-end border-t p-3 mt-5">
           <button
